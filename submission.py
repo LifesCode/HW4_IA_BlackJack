@@ -57,18 +57,7 @@ class BlackjackMDP(util.MDP):
             return successors
         totalCard = sum(deckCard)
         if action == 'Take':
-            if nextCard is not None:
-                totalValue_new = totalValue + self.cardValues[nextCard]
-                deckCard_new = list(deckCard)
-                deckCard_new[nextCard] -= 1
-                deckCard_new = tuple(deckCard_new)
-                reward = 0
-                if sum(deckCard_new) == 0 and totalValue_new <= self.threshold:
-                    reward = totalValue_new
-                if sum(deckCard_new) == 0 or totalValue_new > self.threshold:
-                    deckCard_new = None
-                successors += [((totalValue_new, None, deckCard_new), 1, reward)]
-            else:  # nextCard == None
+            if nextCard is None:
                 for i, card in enumerate(deckCard):
                     if card == 0:
                         continue
@@ -82,6 +71,17 @@ class BlackjackMDP(util.MDP):
                     if sum(deckCard_new) == 0 or totalValue_new > self.threshold:
                         deckCard_new = None
                     successors += [((totalValue_new, None, deckCard_new), float(card) / totalCard, reward)]
+            else:  #
+                totalValue_new = totalValue + self.cardValues[nextCard]
+                deckCard_new = list(deckCard)
+                deckCard_new[nextCard] -= 1
+                deckCard_new = tuple(deckCard_new)
+                reward = 0
+                if sum(deckCard_new) == 0 and totalValue_new <= self.threshold:
+                    reward = totalValue_new
+                if sum(deckCard_new) == 0 or totalValue_new > self.threshold:
+                    deckCard_new = None
+                successors += [((totalValue_new, None, deckCard_new), 1, reward)]
             return successors
         elif action == 'Peek':
             if nextCard is None:
